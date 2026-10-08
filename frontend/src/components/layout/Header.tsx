@@ -48,9 +48,19 @@ export const Header = () => {
         ))}
       </nav>
       
-      <div className="flex items-center space-x-3">
-        <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" className="w-10 h-10 rounded-full border border-gray-200" />
-        <span className="font-medium text-sm">Foydalanuvchi</span>
+      <div className="flex items-center space-x-4">
+        <button 
+          onClick={() => document.documentElement.classList.toggle('dark')} 
+          className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition"
+          title="Tungi/Kunduzgi rejim"
+        >
+          <span className="hidden dark:inline">☀️</span>
+          <span className="inline dark:hidden">🌙</span>
+        </button>
+        <div className="flex items-center space-x-3 border-l border-gray-300 dark:border-gray-700 pl-4">
+          <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700" />
+          <span className="font-medium text-sm text-gray-800 dark:text-gray-200">Foydalanuvchi</span>
+        </div>
       </div>
     </header>
   );

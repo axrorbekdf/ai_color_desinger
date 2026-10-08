@@ -144,20 +144,20 @@ export const Upload = () => {
       <div className="flex-1 flex flex-col gap-6 w-[55%]">
         
         {/* TABS & IMAGE VIEWER */}
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex-1 flex flex-col">
+        <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex-1 flex flex-col">
           <div className="flex gap-3 mb-4">
-            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'detect' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} onClick={() => setActiveTab('detect')}>
+            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'detect' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`} onClick={() => setActiveTab('detect')}>
               <ImageIcon size={16} /> Obyektlarni aniqlash
             </button>
-            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'auto' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} onClick={() => setActiveTab('auto')}>
+            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'auto' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`} onClick={() => setActiveTab('auto')}>
               <Sparkles size={16} /> Rangni avtomatik tanlash
             </button>
-            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'mood' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} onClick={() => setActiveTab('mood')}>
+            <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'mood' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`} onClick={() => setActiveTab('mood')}>
               <SlidersHorizontal size={16} /> Kayfiyatga moslashtirish
             </button>
           </div>
           
-          <div className="relative flex-1 bg-gray-50 rounded-xl overflow-hidden border border-gray-200 flex items-center justify-center h-[420px]">
+          <div className="relative flex-1 bg-gray-50 dark:bg-[#121212] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 flex items-center justify-center h-[420px]">
             {!imageUrl ? (
               <div className="text-center">
                 <input type="file" className="hidden" id="upload-btn" accept="image/*" onChange={handleFileUpload} />
@@ -217,10 +217,10 @@ export const Upload = () => {
                         {/* Box Handle dots for selected state */}
                         {isSelected && (
                            <>
-                             <div className="absolute -top-1 -left-1 w-2 h-2 bg-white border border-gray-400"></div>
-                             <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-gray-400"></div>
-                             <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-gray-400"></div>
-                             <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white border border-gray-400"></div>
+                             <div className="absolute -top-1 -left-1 w-2 h-2 bg-white dark:bg-gray-800 border border-gray-400"></div>
+                             <div className="absolute -top-1 -right-1 w-2 h-2 bg-white dark:bg-gray-800 border border-gray-400"></div>
+                             <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white dark:bg-gray-800 border border-gray-400"></div>
+                             <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white dark:bg-gray-800 border border-gray-400"></div>
                            </>
                         )}
                         <span className={`absolute -top-7 left-1/2 -translate-x-1/2 text-white px-3 py-1 rounded-md text-xs font-bold whitespace-nowrap shadow-md ${style.bg}`}>
@@ -236,34 +236,34 @@ export const Upload = () => {
 
             {/* Floating Toolbar inside image */}
             {imageUrl && (
-              <div className="absolute top-4 right-4 bg-white p-1.5 rounded-xl shadow-lg flex flex-col gap-2 z-20">
-                <button onClick={() => setActiveTool('pointer')} className={`p-2 rounded-lg transition ${activeTool === 'pointer' ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-gray-100 text-gray-600'}`}><MousePointer2 size={18} /></button>
-                <button onClick={() => setActiveTool('hand')} className={`p-2 rounded-lg transition ${activeTool === 'hand' ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-gray-100 text-gray-600'}`}><Hand size={18} /></button>
-                <button onClick={() => setActiveTool('zoom')} className={`p-2 rounded-lg transition ${activeTool === 'zoom' ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-gray-100 text-gray-600'}`}><ZoomIn size={18} /></button>
-                <button onClick={resetView} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition"><RotateCcw size={18} /></button>
+              <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 p-1.5 rounded-xl shadow-lg flex flex-col gap-2 z-20 border border-gray-100 dark:border-gray-700">
+                <button onClick={() => setActiveTool('pointer')} className={`p-2 rounded-lg transition ${activeTool === 'pointer' ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'}`}><MousePointer2 size={18} /></button>
+                <button onClick={() => setActiveTool('hand')} className={`p-2 rounded-lg transition ${activeTool === 'hand' ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'}`}><Hand size={18} /></button>
+                <button onClick={() => setActiveTool('zoom')} className={`p-2 rounded-lg transition ${activeTool === 'zoom' ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'}`}><ZoomIn size={18} /></button>
+                <button onClick={resetView} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300 transition"><RotateCcw size={18} /></button>
               </div>
             )}
           </div>
         </div>
 
         {/* BEFORE AFTER */}
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <h3 className="font-bold flex items-center gap-2 mb-3 text-sm">
+        <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+          <h3 className="font-bold flex items-center gap-2 mb-3 text-sm text-gray-900 dark:text-gray-100">
             <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span> 
             Natija (Before / After)
           </h3>
-          <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden flex shadow-sm border border-gray-200">
-             <div className="flex-1 relative border-r border-white">
-                {imageUrl ? <img src={imageUrl} className="object-cover w-full h-full" alt="Original" /> : <div className="w-full h-full bg-gray-100 flex items-center justify-center"><ImageIcon className="text-gray-300" size={32}/></div>}
+          <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden flex shadow-sm border border-gray-200 dark:border-gray-700">
+             <div className="flex-1 relative border-r border-white dark:border-gray-800">
+                {imageUrl ? <img src={imageUrl} className="object-cover w-full h-full" alt="Original" /> : <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><ImageIcon className="text-gray-300 dark:text-gray-600" size={32}/></div>}
                 <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-sm">Original</span>
              </div>
              <div className="flex-1 relative">
-                {recoloredUrl ? <img src={recoloredUrl} className="object-cover w-full h-full" alt="Recolored" /> : (imageUrl ? <img src={imageUrl} className="object-cover w-full h-full filter sepia hue-rotate-90 opacity-80" alt="Recolored Fake" /> : <div className="w-full h-full bg-gray-100 flex items-center justify-center"><ImageIcon className="text-gray-300" size={32}/></div>)}
+                {recoloredUrl ? <img src={recoloredUrl} className="object-cover w-full h-full" alt="Recolored" /> : (imageUrl ? <img src={imageUrl} className="object-cover w-full h-full filter sepia hue-rotate-90 opacity-80" alt="Recolored Fake" /> : <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><ImageIcon className="text-gray-300 dark:text-gray-600" size={32}/></div>)}
                 <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-sm">AI rang qo'llangan</span>
              </div>
              
              {/* Slider Handle in middle */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 font-bold text-[10px] cursor-ew-resize border border-gray-100 z-10">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-[10px] cursor-ew-resize border border-gray-100 dark:border-gray-700 z-10">
                &lt; &gt;
              </div>
           </div>
@@ -275,55 +275,55 @@ export const Upload = () => {
         
         {/* TOP CONTROLS */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-1 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-            <h3 className="font-bold flex items-center gap-2 mb-3 text-sm">
+          <div className="col-span-1 bg-white dark:bg-[#1a1a1a] p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+            <h3 className="font-bold flex items-center gap-2 mb-3 text-sm text-gray-900 dark:text-gray-100">
               <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> 
               Tanlangan obyekt: {selectedObj ? getColorForObject(selectedObj.object_type).name : 'Divan'}
             </h3>
-            <div className="border border-gray-200 rounded-xl p-1.5 flex items-center justify-between bg-white shadow-sm cursor-pointer hover:border-indigo-300 transition">
+            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-1.5 flex items-center justify-between bg-white dark:bg-gray-800 shadow-sm cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-500 transition">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-8 bg-indigo-100 rounded overflow-hidden flex items-center justify-center">
-                   {imageUrl ? <img src={imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-indigo-300"/>}
+                <div className="w-12 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded overflow-hidden flex items-center justify-center">
+                   {imageUrl ? <img src={imageUrl} className="w-full h-full object-cover" /> : <ImageIcon size={14} className="text-indigo-300 dark:text-indigo-600"/>}
                 </div>
-                <span className="font-semibold text-[13px] text-gray-700">{selectedObj ? getColorForObject(selectedObj.object_type).name : 'Divan'}</span>
+                <span className="font-semibold text-[13px] text-gray-700 dark:text-gray-200">{selectedObj ? getColorForObject(selectedObj.object_type).name : 'Divan'}</span>
               </div>
-              <ChevronDown size={16} className="text-gray-400 mr-1" />
+              <ChevronDown size={16} className="text-gray-400 dark:text-gray-500 mr-1" />
             </div>
           </div>
           
           <div className="col-span-1 flex flex-col gap-3">
-            <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
-               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs"><Layers size={14} className="text-indigo-600" /> Dizayn uslubi</h3>
-               <div className="border border-gray-200 rounded-lg px-3 py-1.5 flex items-center justify-between bg-white cursor-pointer">
-                 <span className="text-xs font-medium text-gray-700">Minimalist</span>
-                 <ChevronDown size={14} className="text-gray-400" />
+            <div className="bg-white dark:bg-[#1a1a1a] p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs text-gray-900 dark:text-gray-100"><Layers size={14} className="text-indigo-600 dark:text-indigo-400" /> Dizayn uslubi</h3>
+               <div className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 flex items-center justify-between bg-white dark:bg-gray-800 cursor-pointer">
+                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Minimalist</span>
+                 <ChevronDown size={14} className="text-gray-400 dark:text-gray-500" />
                </div>
             </div>
-            <div className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
-               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs"><Smile size={14} className="text-indigo-600" /> Maqsad / Kayfiyat</h3>
-               <div className="border border-gray-200 rounded-lg px-3 py-1.5 flex items-center justify-between bg-white cursor-pointer">
-                 <span className="text-xs font-medium text-gray-700">Xotirjam va muvozanatli</span>
-                 <ChevronDown size={14} className="text-gray-400" />
+            <div className="bg-white dark:bg-[#1a1a1a] p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs text-gray-900 dark:text-gray-100"><Smile size={14} className="text-indigo-600 dark:text-indigo-400" /> Maqsad / Kayfiyat</h3>
+               <div className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 flex items-center justify-between bg-white dark:bg-gray-800 cursor-pointer">
+                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Xotirjam va muvozanatli</span>
+                 <ChevronDown size={14} className="text-gray-400 dark:text-gray-500" />
                </div>
             </div>
           </div>
         </div>
 
         {/* AI RECOMMENDATIONS */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-           <h3 className="font-bold flex items-center gap-2 mb-4 text-sm">
+        <div className="bg-white dark:bg-[#1a1a1a] p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+           <h3 className="font-bold flex items-center gap-2 mb-4 text-sm text-gray-900 dark:text-gray-100">
              <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 
-             AI rang tavsiyalari <span className="text-gray-400 font-normal ml-1 text-xs">(Dizayn va kayfiyat asosida)</span>
+             AI rang tavsiyalari <span className="text-gray-400 dark:text-gray-500 font-normal ml-1 text-xs">(Dizayn va kayfiyat asosida)</span>
            </h3>
            <div className="grid grid-cols-4 gap-3">
               {recommendations.length > 0 ? recommendations.map((rec, i) => (
-                <div key={rec.id} onClick={() => setSelectedRecIndex(i)} className={`border rounded-xl p-2.5 cursor-pointer transition ${selectedRecIndex === i ? 'border-indigo-600 shadow-md ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200 hover:border-indigo-300 hover:shadow-sm'}`}>
-                   <div className="relative h-20 rounded-lg mb-2 overflow-hidden bg-gray-100 border border-black/5" style={{ backgroundColor: rec.hex_val }}>
+                <div key={rec.id} onClick={() => setSelectedRecIndex(i)} className={`border rounded-xl p-2.5 cursor-pointer transition ${selectedRecIndex === i ? 'border-indigo-600 shadow-md ring-1 ring-indigo-600 bg-indigo-50/10 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm'}`}>
+                   <div className="relative h-20 rounded-lg mb-2 overflow-hidden bg-gray-100 dark:bg-gray-800 border border-black/5 dark:border-white/5" style={{ backgroundColor: rec.hex_val }}>
                      {imageUrl && <img src={imageUrl} className="w-full h-full object-cover opacity-50 mix-blend-overlay" />}
                      {selectedRecIndex === i && <div className="absolute top-1 right-1 bg-indigo-600 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-sm"><CheckCircle2 size={12} strokeWidth={3} /></div>}
                    </div>
-                   <p className="font-semibold text-[11px] leading-tight mb-1 text-gray-800">{rec.color_name}</p>
-                   <p className="font-bold text-[13px] text-gray-900 mb-2">{rec.compatibility_score}% mos</p>
+                   <p className="font-semibold text-[11px] leading-tight mb-1 text-gray-800 dark:text-gray-200">{rec.color_name}</p>
+                   <p className="font-bold text-[13px] text-gray-900 dark:text-white mb-2">{rec.compatibility_score}% mos</p>
                    <div className="flex gap-1.5">
                       <div className="w-4 h-4 rounded-full" style={{backgroundColor: rec.hex_val}}></div>
                       <div className="w-4 h-4 rounded-full opacity-70" style={{backgroundColor: rec.hex_val}}></div>
@@ -339,16 +339,16 @@ export const Upload = () => {
                   { name: "Yorqin va ijobiy", match: 81, active: false, colors: ['#D2AD7B', '#E3C69D', '#F0E2CD', '#FAF6F2'] },
                   { name: "Energiya va ishtiyoq", match: 76, active: false, colors: ['#CC5555', '#E67A7A', '#F2B6B6', '#FAEEEE'] }
                 ].map((item, i) => (
-                  <div key={i} className={`border rounded-xl p-2.5 cursor-pointer transition ${item.active ? 'border-indigo-600 shadow-md ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200 hover:border-indigo-300 hover:shadow-sm'}`}>
-                     <div className="relative h-20 rounded-lg mb-2 overflow-hidden bg-gray-100" style={{ backgroundColor: item.colors[0] }}>
+                  <div key={i} className={`border rounded-xl p-2.5 cursor-pointer transition ${item.active ? 'border-indigo-600 shadow-md ring-1 ring-indigo-600 bg-indigo-50/10 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm'}`}>
+                     <div className="relative h-20 rounded-lg mb-2 overflow-hidden bg-gray-100 dark:bg-gray-800" style={{ backgroundColor: item.colors[0] }}>
                        {imageUrl && <img src={imageUrl} className="w-full h-full object-cover opacity-50 mix-blend-overlay" />}
                        {item.active && <div className="absolute top-1 right-1 bg-indigo-600 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-sm"><CheckCircle2 size={12} strokeWidth={3} /></div>}
                      </div>
-                     <p className="font-semibold text-[11px] leading-tight mb-1 text-gray-800">{item.name}</p>
-                     <p className="font-bold text-[13px] text-gray-900 mb-2">{item.match}% mos</p>
+                     <p className="font-semibold text-[11px] leading-tight mb-1 text-gray-800 dark:text-gray-200">{item.name}</p>
+                     <p className="font-bold text-[13px] text-gray-900 dark:text-white mb-2">{item.match}% mos</p>
                      <div className="flex gap-1.5">
                         {item.colors.map((c, j) => (
-                          <div key={j} className="w-4 h-4 rounded-full border border-black/5" style={{ backgroundColor: c }}></div>
+                          <div key={j} className="w-4 h-4 rounded-full border border-black/5 dark:border-white/5" style={{ backgroundColor: c }}></div>
                         ))}
                      </div>
                   </div>
@@ -357,13 +357,13 @@ export const Upload = () => {
            </div>
            
            <div className="flex gap-3 mt-5">
-              <button onClick={applyColor} disabled={recommendations.length === 0 && !imageUrl} className="flex-[2] bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition shadow-md shadow-indigo-200">
+              <button onClick={applyColor} disabled={recommendations.length === 0 && !imageUrl} className="flex-[2] bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 dark:disabled:bg-indigo-900 disabled:cursor-not-allowed text-white rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition shadow-md shadow-indigo-200 dark:shadow-none">
                  <CheckCircle2 size={18} /> Bu rangni qo'llash
               </button>
-              <button className="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-indigo-600 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition">
+              <button className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-indigo-600 dark:text-indigo-400 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition">
                  <RotateCcw size={16} /> Boshqa variantlar
               </button>
-              <button className="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-indigo-600 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition">
+              <button className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-indigo-600 dark:text-indigo-400 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition">
                  <Plus size={16} /> Palitrani saqlash
               </button>
            </div>
@@ -371,22 +371,22 @@ export const Upload = () => {
 
         {/* ANALYSIS BOTTOM ROW */}
         <div className="flex gap-4 flex-1">
-           <div className="flex-1 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+           <div className="flex-1 bg-white dark:bg-[#1a1a1a] p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold flex items-center gap-2 text-sm">
+                <h3 className="font-bold flex items-center gap-2 text-sm text-gray-900 dark:text-gray-100">
                   <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span> 
                   Tanlangan rang palitrasi
                 </h3>
               </div>
-              <div className="flex items-center gap-2 mb-6 border-b pb-5">
+              <div className="flex items-center gap-2 mb-6 border-b border-gray-100 dark:border-gray-800 pb-5">
                 <div className="w-12 h-12 rounded-lg bg-[#698263] shadow-inner"></div>
                 <div className="w-10 h-10 rounded-full bg-[#839E7C]"></div>
                 <div className="w-10 h-10 rounded-full bg-[#C2D1BC]"></div>
                 <div className="w-10 h-10 rounded-full bg-[#EEF2EC]"></div>
-                <button className="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition ml-1"><Plus size={18}/></button>
+                <button className="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition ml-1"><Plus size={18}/></button>
               </div>
               
-              <h4 className="font-bold mb-4 text-xs text-gray-800">Rang ma'nosi va psixologik ta'siri</h4>
+              <h4 className="font-bold mb-4 text-xs text-gray-800 dark:text-gray-200">Rang ma'nosi va psixologik ta'siri</h4>
               <div className="flex gap-5 items-center">
                  <div className="w-14 h-32 bg-[#698263] rounded-lg shadow-inner"></div>
                  <div className="flex-1 space-y-3">
@@ -398,22 +398,22 @@ export const Upload = () => {
                       { l: 'Diqqat', v: 68 },
                     ].map((st, i) => (
                       <div key={i} className="flex items-center gap-3 text-[11px]">
-                         <span className="w-24 font-medium text-gray-600">{st.l}</span>
-                         <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                         <span className="w-24 font-medium text-gray-600 dark:text-gray-400">{st.l}</span>
+                         <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                            <div className="h-full bg-[#698263] rounded-full" style={{ width: `${st.v}%`}}></div>
                          </div>
-                         <span className="font-bold w-6 text-right text-gray-700">{st.v}%</span>
+                         <span className="font-bold w-6 text-right text-gray-700 dark:text-gray-300">{st.v}%</span>
                       </div>
                     ))}
                  </div>
               </div>
-              <p className="text-[11px] text-gray-500 mt-4 leading-relaxed font-medium">
+              <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-4 leading-relaxed font-medium">
                 Yashil rang tabiat, tinchlik va muvozanat bilan bog'liq. U stressni kamaytiradi, ruhiy holatni yaxshilaydi va diqqatni jamlashga yordam beradi.
               </p>
            </div>
            
-           <div className="flex-[0.9] bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-              <h3 className="font-bold flex items-center gap-2 mb-4 text-sm">
+           <div className="flex-[0.9] bg-white dark:bg-[#1a1a1a] p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col">
+              <h3 className="font-bold flex items-center gap-2 mb-4 text-sm text-gray-900 dark:text-gray-100">
                 <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">5</span> 
                 Rang va kayfiyat tahlili
               </h3>
@@ -433,24 +433,24 @@ export const Upload = () => {
                       </ResponsiveContainer>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
                          <Smile size={18} className="text-green-500 mb-0.5" />
-                         <span className="text-[9px] font-bold text-center leading-tight text-gray-600">Umumiy kayfiyat<br/><span className="text-gray-900 text-[11px]">78%</span></span>
+                         <span className="text-[9px] font-bold text-center leading-tight text-gray-600 dark:text-gray-400">Umumiy kayfiyat<br/><span className="text-gray-900 dark:text-white text-[11px]">78%</span></span>
                       </div>
                    </div>
                    <div className="flex-1 flex flex-col gap-2.5 text-[11px]">
                       {pieData.map(d => (
                          <div key={d.name} className="flex justify-between items-center">
-                           <span className="flex items-center gap-2 font-medium text-gray-600"><div className="w-2.5 h-2.5 rounded-full" style={{backgroundColor: d.color}}></div> {d.name}</span>
-                           <span className="font-bold text-gray-800">{d.value}%</span>
+                           <span className="flex items-center gap-2 font-medium text-gray-600 dark:text-gray-400"><div className="w-2.5 h-2.5 rounded-full" style={{backgroundColor: d.color}}></div> {d.name}</span>
+                           <span className="font-bold text-gray-800 dark:text-gray-200">{d.value}%</span>
                          </div>
                       ))}
                    </div>
                  </div>
               </div>
 
-              <div className="bg-green-50/50 border border-green-100 p-3.5 rounded-xl mt-3">
-                 <h4 className="font-bold text-green-700 text-xs flex items-center gap-1.5 mb-1.5"><Sparkles size={14} /> Xulosa</h4>
-                 <p className="text-[11px] text-green-800/80 leading-relaxed font-medium">
-                   Tanlangan ranglar palitrasi sizda asosan <strong className="text-green-800">xotirjamlik</strong> va <strong className="text-green-800">ijobiy kayfiyatni</strong> aks ettiradi. Bu palitra dam olish uchun mos.
+              <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 p-3.5 rounded-xl mt-3">
+                 <h4 className="font-bold text-green-700 dark:text-green-400 text-xs flex items-center gap-1.5 mb-1.5"><Sparkles size={14} /> Xulosa</h4>
+                 <p className="text-[11px] text-green-800/80 dark:text-green-200/70 leading-relaxed font-medium">
+                   Tanlangan ranglar palitrasi sizda asosan <strong className="text-green-800 dark:text-green-400">xotirjamlik</strong> va <strong className="text-green-800 dark:text-green-400">ijobiy kayfiyatni</strong> aks ettiradi. Bu palitra dam olish uchun mos.
                  </p>
               </div>
            </div>
