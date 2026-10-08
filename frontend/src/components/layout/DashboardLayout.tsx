@@ -1,9 +1,10 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 
 export const DashboardLayout = () => {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col h-screen bg-[#f8f9fc] dark:bg-[#121212] overflow-hidden text-gray-900 dark:text-gray-100 font-sans">
       <Header />

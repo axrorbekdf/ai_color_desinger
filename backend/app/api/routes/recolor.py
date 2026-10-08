@@ -35,7 +35,11 @@ def apply_recolor(project_id: int, request: RecolorRequest, db: Session = Depend
         raise HTTPException(status_code=400, detail="Object or mask not found")
 
     storage_root = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "storage"))
-    img_path = storage_root.parent / "storage" / project.original_image_path
+    
+    # Allow cumulative recoloring by using the modified image as the base if it exists
+    base_image = project.modified_image_path if project.modified_image_path else project.original_image_path
+    img_path = storage_root.parent / "storage" / base_image
+    
     mask_path = storage_root.parent / "storage" / obj.segmentation_mask_path
     
     output_filename = f"{uuid.uuid4().hex}_recolored.jpg"
@@ -53,7 +57,26 @@ def apply_recolor(project_id: int, request: RecolorRequest, db: Session = Depend
     project.modified_image_path = f"processed/{output_filename}"
     project.selected_object_id = obj.id
     
+    from app.models.project import ProjectResult
+    result_record = ProjectResult(
+        project_id=project.id,
+        name=f"Loyiha {project.id} natijasi",
+        result_image_path=project.modified_image_path,
+        action_description=f"{obj.object_type} obyekti {rec.hex_val} rangiga bo'yaldi"
+    )
+    db.add(result_record)
+    
     db.commit()
     db.refresh(project)
     
     return {"message": "Recolored successfully", "modified_image_path": project.modified_image_path}
+
+@router.post("/reset/{project_id}")
+def reset_recolor(project_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    project = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+        
+    project.modified_image_path = None
+    db.commit()
+    return {"message": "Reset successful"}

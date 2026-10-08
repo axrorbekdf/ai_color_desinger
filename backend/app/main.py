@@ -28,6 +28,9 @@ app.include_router(recolor.router, prefix=f"{settings.API_V1_STR}/recolor", tags
 app.include_router(export.router, prefix=f"{settings.API_V1_STR}/export", tags=["export"])
 app.include_router(research.router, prefix=f"{settings.API_V1_STR}/research", tags=["research"])
 
+from app.api.routes import stats
+app.include_router(stats.router, prefix=f"{settings.API_V1_STR}/stats", tags=["stats"])
+
 @app.get("/")
 def root():
     return {"message": "Welcome to AI Color Designer API"}

@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface BeforeAfterSliderProps {
   beforeImage: string;
@@ -6,6 +7,7 @@ interface BeforeAfterSliderProps {
 }
 
 export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ beforeImage, afterImage }) => {
+  const { t } = useTranslation();
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,8 +77,8 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({ beforeImag
         </div>
       </div>
       
-      <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded backdrop-blur-sm text-sm font-medium">Original</div>
-      <div className="absolute top-4 right-4 bg-green-500/80 text-white px-3 py-1 rounded backdrop-blur-sm text-sm font-medium">Recolored</div>
+      <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded backdrop-blur-sm text-sm font-medium">{t('components.slider_original')}</div>
+      <div className="absolute top-4 right-4 bg-green-500/80 text-white px-3 py-1 rounded backdrop-blur-sm text-sm font-medium">{t('components.slider_recolored')}</div>
     </div>
   );
 };

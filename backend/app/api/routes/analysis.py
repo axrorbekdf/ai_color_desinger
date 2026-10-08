@@ -58,3 +58,12 @@ def segment_image(project_id: int, db: Session = Depends(get_db), current_user: 
         db.refresh(obj)
         
     return {"message": f"Found {len(objects_created)} objects", "objects": objects_created}
+
+@router.get("/objects/{project_id}")
+def get_objects(project_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    project = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+        
+    objects = db.query(DetectedObject).filter(DetectedObject.project_id == project_id).all()
+    return {"objects": objects}

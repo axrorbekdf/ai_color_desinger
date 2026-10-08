@@ -1,18 +1,18 @@
-import React from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { Home, Upload, Palette, Smile, Folder, Info } from 'lucide-react';
 import clsx from 'clsx';
 
 export const Header = () => {
+  const { t } = useTranslation();
 
   const navItems = [
-    { name: "Bosh sahifa", path: '/', icon: Home },
-    { name: "Rasm yuklash", path: '/upload', icon: Upload },
-    { name: "Rang tavsiyasi", path: '/recommend', icon: Palette },
-    { name: "Kayfiyat tahlili", path: '/mood', icon: Smile },
-    { name: "Loyihalarim", path: '/projects', icon: Folder },
-    { name: "Biz haqimizda", path: '/about', icon: Info },
+    { name: t("sidebar.dashboard"), path: '/', icon: Home },
+    { name: t("sidebar.upload"), path: '/upload', icon: Upload },
+    { name: t("sidebar.color_rec"), path: '/color-rec', icon: Palette },
+    { name: t("sidebar.mood_analysis"), path: '/mood-analysis', icon: Smile },
+    { name: t("sidebar.projects"), path: '/projects', icon: Folder },
+    { name: t("sidebar.about"), path: '/about', icon: Info },
   ];
 
   return (
@@ -57,10 +57,10 @@ export const Header = () => {
           <span className="hidden dark:inline">☀️</span>
           <span className="inline dark:hidden">🌙</span>
         </button>
-        <div className="flex items-center space-x-3 border-l border-gray-300 dark:border-gray-700 pl-4">
+        <NavLink to="/profile" className="flex items-center space-x-3 border-l border-gray-300 dark:border-gray-700 pl-4 hover:opacity-80 transition cursor-pointer">
           <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700" />
-          <span className="font-medium text-sm text-gray-800 dark:text-gray-200">Foydalanuvchi</span>
-        </div>
+          <span className="font-medium text-sm text-gray-800 dark:text-gray-200">{t('header.user')}</span>
+        </NavLink>
       </div>
     </header>
   );

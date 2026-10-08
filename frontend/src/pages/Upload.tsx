@@ -1,9 +1,15 @@
-import React, { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UploadCloud, CheckCircle2, SlidersHorizontal, Image as ImageIcon, Sparkles, Hand, ZoomIn, RotateCcw, Plus, Loader2, Layers, Smile, ChevronDown, MousePointer2 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { useSearchParams } from 'react-router-dom';
+import { useToastStore } from '../store/useToastStore';
 import api from '../services/api';
 
 export const Upload = () => {
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const { addToast } = useToastStore();
   const [activeTab, setActiveTab] = useState('detect');
   
   const [isLoading, setIsLoading] = useState(false);
@@ -22,30 +28,72 @@ export const Upload = () => {
   const [activeTool, setActiveTool] = useState('pointer'); // pointer, hand, zoom
   const [isDragging, setIsDragging] = useState(false);
 
+  useEffect(() => {
+    const pid = searchParams.get('projectId');
+    if (pid) {
+      loadProject(parseInt(pid));
+    }
+  }, [searchParams]);
+
+  const loadProject = async (id: number) => {
+    setIsLoading(true);
+    setLoadingText(t('upload.loading_project'));
+    try {
+      const res = await api.get(`/projects/${id}`);
+      const proj = res.data;
+      setProjectId(proj.id);
+      
+      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
+      if (proj.original_image_path) {
+        setImageUrl(`${baseUrl}/storage/${proj.original_image_path}`);
+      }
+      
+      const objRes = await api.get(`/analysis/objects/${id}`);
+      if (objRes.data && objRes.data.objects) {
+        setObjects(objRes.data.objects);
+      }
+      
+      if (proj.modified_image_path) {
+        setRecoloredUrl(`${baseUrl}/storage/${proj.modified_image_path}`);
+      }
+      
+      // If we have recommendations stored, we could load them here.
+      // For now, the user can re-click the object.
+    } catch (err) {
+      console.error(err);
+      addToast(t('upload.project_not_found'), 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsLoading(true);
     try {
-      setLoadingText('Loyiha yaratilmoqda...');
-      const projRes = await api.post('/projects/', { name: "Yangi Loyiha", design_style: "Modern", mood_goal: "Calm" });
+      setLoadingText(t('upload.creating_project'));
+      
+      // Loyiha uchun unikal nom (ID)
+      const uniqueName = `Loyiha #${Math.floor(1000 + Math.random() * 9000)}`;
+      const projRes = await api.post('/projects/', { name: uniqueName, design_style: "Modern", mood_goal: "Calm" });
       const pid = projRes.data.id;
       setProjectId(pid);
 
-      setLoadingText('Rasm yuklanmoqda...');
+      setLoadingText(t('upload.uploading_image'));
       const formData = new FormData();
       formData.append('file', file);
       await api.post(`/images/upload?project_id=${pid}`, formData);
       setImageUrl(URL.createObjectURL(file));
 
-      setLoadingText('AI obyektlarni aniqlamoqda...');
+      setLoadingText(t('upload.detecting_objects'));
       const segRes = await api.post(`/analysis/segment/${pid}`);
       setObjects(segRes.data.objects);
       
     } catch (error) {
       console.error(error);
-      alert('Xatolik yuz berdi!');
+      addToast(t('upload.error'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +104,7 @@ export const Upload = () => {
     if (!projectId) return;
     
     setIsLoading(true);
-    setLoadingText('Ranglar tahlil qilinmoqda...');
+    setLoadingText(t('upload.analyzing_colors'));
     try {
       const recRes = await api.post(`/colors/recommend/${projectId}`, { object_id: obj.id });
       setRecommendations(recRes.data.recommendations || []);
@@ -97,16 +145,29 @@ export const Upload = () => {
     const recId = recommendations[selectedRecIndex].id;
     
     setIsLoading(true);
-    setLoadingText("Rang qo'llanilmoqda...");
+    setLoadingText(t('upload.applying_color'));
     try {
       const colRes = await api.post(`/recolor/${projectId}`, { recommendation_id: recId });
       const path = colRes.data.modified_image_path;
-      const relativePath = path.replace('../storage/', '');
-      const fullUrl = import.meta.env.VITE_API_URL.replace('/api/v1', '') + '/storage/' + relativePath;
-      setRecoloredUrl(fullUrl);
+      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
+      setRecoloredUrl(`${baseUrl}/storage/${path}`);
     } catch (err) {
       console.error(err);
-      alert("Rang qo'llashda xatolik yuz berdi");
+      addToast(t('upload.apply_error'), 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetRecolor = async () => {
+    if (!projectId) return;
+    setIsLoading(true);
+    setLoadingText(t('upload.restoring'));
+    try {
+      await api.post(`/recolor/reset/${projectId}`);
+      setRecoloredUrl(null);
+    } catch (err) {
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -147,13 +208,13 @@ export const Upload = () => {
         <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex-1 flex flex-col">
           <div className="flex gap-3 mb-4">
             <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'detect' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`} onClick={() => setActiveTab('detect')}>
-              <ImageIcon size={16} /> Obyektlarni aniqlash
+              <ImageIcon size={16} /> {t('upload.detect_objects')}
             </button>
             <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'auto' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`} onClick={() => setActiveTab('auto')}>
-              <Sparkles size={16} /> Rangni avtomatik tanlash
+              <Sparkles size={16} /> {t('upload.auto_select')}
             </button>
             <button className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition text-xs ${activeTab === 'mood' ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`} onClick={() => setActiveTab('mood')}>
-              <SlidersHorizontal size={16} /> Kayfiyatga moslashtirish
+              <SlidersHorizontal size={16} /> {t('upload.mood_analysis')}
             </button>
           </div>
           
@@ -162,7 +223,7 @@ export const Upload = () => {
               <div className="text-center">
                 <input type="file" className="hidden" id="upload-btn" accept="image/*" onChange={handleFileUpload} />
                 <label htmlFor="upload-btn" className="cursor-pointer bg-indigo-600 text-white px-6 py-3 rounded-lg font-bold shadow-md hover:bg-indigo-700 transition flex items-center gap-2">
-                  <UploadCloud size={20} /> Rasmni yuklang
+                  <UploadCloud size={20} /> {t('upload.upload_image')}
                 </label>
               </div>
             ) : (
@@ -250,16 +311,16 @@ export const Upload = () => {
         <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
           <h3 className="font-bold flex items-center gap-2 mb-3 text-sm text-gray-900 dark:text-gray-100">
             <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span> 
-            Natija (Before / After)
+            {t('upload.result_upload')}
           </h3>
           <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden flex shadow-sm border border-gray-200 dark:border-gray-700">
              <div className="flex-1 relative border-r border-white dark:border-gray-800">
                 {imageUrl ? <img src={imageUrl} className="object-cover w-full h-full" alt="Original" /> : <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><ImageIcon className="text-gray-300 dark:text-gray-600" size={32}/></div>}
-                <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-sm">Original</span>
+                <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-sm">{t('upload.original')}</span>
              </div>
              <div className="flex-1 relative">
                 {recoloredUrl ? <img src={recoloredUrl} className="object-cover w-full h-full" alt="Recolored" /> : (imageUrl ? <img src={imageUrl} className="object-cover w-full h-full filter sepia hue-rotate-90 opacity-80" alt="Recolored Fake" /> : <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"><ImageIcon className="text-gray-300 dark:text-gray-600" size={32}/></div>)}
-                <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-sm">AI rang qo'llangan</span>
+                <span className="absolute top-3 left-3 bg-gray-900/80 text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-sm">{t('upload.ai_colored')}</span>
              </div>
              
              {/* Slider Handle in middle */}
@@ -293,16 +354,16 @@ export const Upload = () => {
           
           <div className="col-span-1 flex flex-col gap-3">
             <div className="bg-white dark:bg-[#1a1a1a] p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
-               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs text-gray-900 dark:text-gray-100"><Layers size={14} className="text-indigo-600 dark:text-indigo-400" /> Dizayn uslubi</h3>
+               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs text-gray-900 dark:text-gray-100"><Layers size={14} className="text-indigo-600 dark:text-indigo-400" /> {t('upload.design_style_upload')}</h3>
                <div className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 flex items-center justify-between bg-white dark:bg-gray-800 cursor-pointer">
-                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Minimalist</span>
+                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{t('upload.minimalist')}</span>
                  <ChevronDown size={14} className="text-gray-400 dark:text-gray-500" />
                </div>
             </div>
             <div className="bg-white dark:bg-[#1a1a1a] p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
-               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs text-gray-900 dark:text-gray-100"><Smile size={14} className="text-indigo-600 dark:text-indigo-400" /> Maqsad / Kayfiyat</h3>
+               <h3 className="font-bold flex items-center gap-2 mb-2 text-xs text-gray-900 dark:text-gray-100"><Smile size={14} className="text-indigo-600 dark:text-indigo-400" /> {t('upload.goal_mood')}</h3>
                <div className="border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 flex items-center justify-between bg-white dark:bg-gray-800 cursor-pointer">
-                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Xotirjam va muvozanatli</span>
+                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{t('upload.calm_balanced')}</span>
                  <ChevronDown size={14} className="text-gray-400 dark:text-gray-500" />
                </div>
             </div>
@@ -313,7 +374,7 @@ export const Upload = () => {
         <div className="bg-white dark:bg-[#1a1a1a] p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
            <h3 className="font-bold flex items-center gap-2 mb-4 text-sm text-gray-900 dark:text-gray-100">
              <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 
-             AI rang tavsiyalari <span className="text-gray-400 dark:text-gray-500 font-normal ml-1 text-xs">(Dizayn va kayfiyat asosida)</span>
+             {t('upload.ai_recommendations')} <span className="text-gray-400 dark:text-gray-500 font-normal ml-1 text-xs">{t('upload.based_on_design')}</span>
            </h3>
            <div className="grid grid-cols-4 gap-3">
               {recommendations.length > 0 ? recommendations.map((rec, i) => (
@@ -358,13 +419,13 @@ export const Upload = () => {
            
            <div className="flex gap-3 mt-5">
               <button onClick={applyColor} disabled={recommendations.length === 0 && !imageUrl} className="flex-[2] bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 dark:disabled:bg-indigo-900 disabled:cursor-not-allowed text-white rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition shadow-md shadow-indigo-200 dark:shadow-none">
-                 <CheckCircle2 size={18} /> Bu rangni qo'llash
+                 <CheckCircle2 size={18} /> {t('upload.apply_color')}
+              </button>
+              <button onClick={resetRecolor} disabled={!recoloredUrl} className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-indigo-600 dark:text-indigo-400 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition disabled:opacity-50">
+                 <RotateCcw size={16} /> {t('upload.restore')}
               </button>
               <button className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-indigo-600 dark:text-indigo-400 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition">
-                 <RotateCcw size={16} /> Boshqa variantlar
-              </button>
-              <button className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-indigo-600 dark:text-indigo-400 rounded-xl py-3 font-semibold flex justify-center items-center gap-2 transition">
-                 <Plus size={16} /> Palitrani saqlash
+                 <Plus size={16} /> {t('upload.save_palette')}
               </button>
            </div>
         </div>
@@ -375,7 +436,7 @@ export const Upload = () => {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold flex items-center gap-2 text-sm text-gray-900 dark:text-gray-100">
                   <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span> 
-                  Tanlangan rang palitrasi
+                  {t('upload.selected_palette')}
                 </h3>
               </div>
               <div className="flex items-center gap-2 mb-6 border-b border-gray-100 dark:border-gray-800 pb-5">
@@ -386,7 +447,7 @@ export const Upload = () => {
                 <button className="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition ml-1"><Plus size={18}/></button>
               </div>
               
-              <h4 className="font-bold mb-4 text-xs text-gray-800 dark:text-gray-200">Rang ma'nosi va psixologik ta'siri</h4>
+              <h4 className="font-bold mb-4 text-xs text-gray-800 dark:text-gray-200">{t('upload.color_meaning')}</h4>
               <div className="flex gap-5 items-center">
                  <div className="w-14 h-32 bg-[#698263] rounded-lg shadow-inner"></div>
                  <div className="flex-1 space-y-3">
@@ -408,14 +469,14 @@ export const Upload = () => {
                  </div>
               </div>
               <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-4 leading-relaxed font-medium">
-                Yashil rang tabiat, tinchlik va muvozanat bilan bog'liq. U stressni kamaytiradi, ruhiy holatni yaxshilaydi va diqqatni jamlashga yordam beradi.
+                {t('upload.green_desc')}
               </p>
            </div>
            
            <div className="flex-[0.9] bg-white dark:bg-[#1a1a1a] p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col">
               <h3 className="font-bold flex items-center gap-2 mb-4 text-sm text-gray-900 dark:text-gray-100">
                 <span className="bg-indigo-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">5</span> 
-                Rang va kayfiyat tahlili
+                {t('upload.color_analysis_upload')}
               </h3>
               
               <div className="flex-1 flex flex-col justify-center">
@@ -433,7 +494,7 @@ export const Upload = () => {
                       </ResponsiveContainer>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
                          <Smile size={18} className="text-green-500 mb-0.5" />
-                         <span className="text-[9px] font-bold text-center leading-tight text-gray-600 dark:text-gray-400">Umumiy kayfiyat<br/><span className="text-gray-900 dark:text-white text-[11px]">78%</span></span>
+                         <span className="text-[9px] font-bold text-center leading-tight text-gray-600 dark:text-gray-400">{t('upload.mood_upload')}<br/><span className="text-gray-900 dark:text-white text-[11px]">78%</span></span>
                       </div>
                    </div>
                    <div className="flex-1 flex flex-col gap-2.5 text-[11px]">
@@ -448,9 +509,9 @@ export const Upload = () => {
               </div>
 
               <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 p-3.5 rounded-xl mt-3">
-                 <h4 className="font-bold text-green-700 dark:text-green-400 text-xs flex items-center gap-1.5 mb-1.5"><Sparkles size={14} /> Xulosa</h4>
+                 <h4 className="font-bold text-green-700 dark:text-green-400 text-xs flex items-center gap-1.5 mb-1.5"><Sparkles size={14} /> {t('upload.summary')}</h4>
                  <p className="text-[11px] text-green-800/80 dark:text-green-200/70 leading-relaxed font-medium">
-                   Tanlangan ranglar palitrasi sizda asosan <strong className="text-green-800 dark:text-green-400">xotirjamlik</strong> va <strong className="text-green-800 dark:text-green-400">ijobiy kayfiyatni</strong> aks ettiradi. Bu palitra dam olish uchun mos.
+                   {t('upload.selected_palettes')} <strong className="text-green-800 dark:text-green-400">{t('upload.calmness')}</strong> va <strong className="text-green-800 dark:text-green-400">{t('upload.positive_mood')}</strong> {t('upload.reflects')}
                  </p>
               </div>
            </div>

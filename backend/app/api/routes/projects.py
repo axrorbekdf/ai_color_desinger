@@ -45,7 +45,7 @@ def create_project(project_in: ProjectCreate, db: Session = Depends(get_db), cur
 
 @router.get("/", response_model=List[ProjectResponse])
 def get_projects(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    projects = db.query(Project).filter(Project.user_id == current_user.id).offset(skip).limit(limit).all()
+    projects = db.query(Project).filter(Project.user_id == current_user.id).order_by(Project.created_at.desc()).offset(skip).limit(limit).all()
     return projects
 
 @router.get("/{project_id}", response_model=ProjectResponse)
@@ -60,6 +60,34 @@ def delete_project(project_id: int, db: Session = Depends(get_db), current_user:
     project = db.query(Project).filter(Project.id == project_id, Project.user_id == current_user.id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
+        
+    # Manually cascade delete to avoid FK constraints
+    from app.models.analysis import ColorRecommendation, DetectedObject
+    from app.models.project import ProjectResult
+    
+    db.query(ColorRecommendation).filter(ColorRecommendation.project_id == project_id).delete()
+    db.query(DetectedObject).filter(DetectedObject.project_id == project_id).delete()
+    db.query(ProjectResult).filter(ProjectResult.project_id == project_id).delete()
+    
     db.delete(project)
     db.commit()
     return {"message": "Project deleted successfully"}
+
+@router.get("/user/results")
+def get_user_results(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    from app.models.project import ProjectResult
+    
+    # Get all results for projects owned by this user
+    results = db.query(ProjectResult).join(Project).filter(Project.user_id == current_user.id).order_by(ProjectResult.created_at.desc()).all()
+    
+    return [
+        {
+            "id": r.id,
+            "project_id": r.project_id,
+            "project_name": r.project.name if r.project else f"Loyiha {r.project_id}",
+            "name": r.name,
+            "result_image_path": r.result_image_path,
+            "action_description": r.action_description,
+            "created_at": r.created_at
+        } for r in results
+    ]
