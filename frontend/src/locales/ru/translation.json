@@ -1,0 +1,11 @@
+{
+  "app_name": "AI Color Designer",
+  "subtitle": "Красивый дизайн и отличное настроение с помощью цвета.",
+  "sidebar": {
+    "dashboard": "Главная",
+    "upload": "Загрузить фото",
+    "projects": "Мои проекты",
+    "research": "Исследование",
+    "settings": "Настройки"
+  }
+}

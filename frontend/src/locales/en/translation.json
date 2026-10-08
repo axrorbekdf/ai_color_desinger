@@ -1,0 +1,11 @@
+{
+  "app_name": "AI Color Designer",
+  "subtitle": "Beautiful design and a better mood through color.",
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "upload": "Upload Image",
+    "projects": "My Projects",
+    "research": "Research",
+    "settings": "Settings"
+  }
+}

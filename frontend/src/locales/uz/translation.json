@@ -1,0 +1,11 @@
+{
+  "app_name": "AI Color Designer",
+  "subtitle": "Go'zal dizayn va ranglar orqali yaxshi kayfiyat.",
+  "sidebar": {
+    "dashboard": "Bosh sahifa",
+    "upload": "Rasm yuklash",
+    "projects": "Mening loyihalarim",
+    "research": "Tadqiqot",
+    "settings": "Sozlamalar"
+  }
+}
